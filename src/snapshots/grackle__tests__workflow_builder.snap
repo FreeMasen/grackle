@@ -1,0 +1,24 @@
+---
+source: src/lib.rs
+expression: workflow
+---
+name: test-workflow
+"on":
+  pull_request:
+    branches-ignore:
+      - test
+  push:
+    branches:
+      - main
+    tags:
+      - "v?.[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch: {}
+jobs:
+  some-job:
+    steps:
+      - uses: some-action-user/some-action
+        with:
+          complex:
+            inner-key: inner-value
+            inner-key2: 1
+          key: value

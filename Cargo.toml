@@ -1,0 +1,21 @@
+[package]
+name = "grackle"
+version = "0.1.0"
+edition = "2021"
+description = "Github actions parsing and generator"
+authors = ["Robert Masen <r.f.masen@gmail.com>"]
+categories = ["Configuration", "Development tools"]
+homepage = "https://gh.freemasen.com"
+readme = "README.md"
+repository = "https://github.com/FreeMasen/grackle"
+publish = true
+keywords = ["github", "actions", "ci", "yml", "yaml"]
+
+[dependencies]
+serde = { version = "1", features = [ "derive" ] }
+serde_yml = "0.0.10"
+typed-builder = "0.19"
+strum = { version = "0.26", features = [ "derive" ] }
+
+[dev-dependencies]
+insta = { version = "1.39", features = [ "yaml" ] }
