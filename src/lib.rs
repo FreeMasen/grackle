@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_yml::Value;
 use std::collections::BTreeMap;
@@ -6,214 +7,214 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn on_pull_request(&mut self, pull: PullRequest) {
+    pub fn on_pull_request(&mut self, pull: PullRequest) {
         self.on.pull_request = Some(pull);
     }
-    fn on_pull_request_target(&mut self, pull: PullRequest) {
+    pub fn on_pull_request_target(&mut self, pull: PullRequest) {
         self.on.pull_request_target = Some(pull);
     }
-    fn on_push(&mut self, push: Push) {
+    pub fn on_push(&mut self, push: Push) {
         self.on.push = Some(push);
     }
-    fn on_schedule(&mut self, sched: Schedule) {
+    pub fn on_schedule(&mut self, sched: Schedule) {
         self.on.schedule = Some(sched);
     }
-    fn on_workflow_call(&mut self, call: WorkflowCall) {
+    pub fn on_workflow_call(&mut self, call: WorkflowCall) {
         self.on.workflow_call = Some(call);
     }
-    fn on_workflow_dispatch(&mut self, disp: WorkflowDispatch) {
+    pub fn on_workflow_dispatch(&mut self, disp: WorkflowDispatch) {
         self.on.workflow_dispatch = Some(disp);
     }
-    fn actions_write_permission(&mut self) {
+    pub fn actions_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.actions = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().actions(PermissionValue::Write).build())
         }
     }
-    fn actions_read_permission(&mut self) {
+    pub fn actions_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.actions = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().actions(PermissionValue::Read).build())
         }
     }
-    fn attestations_write_permission(&mut self) {
+    pub fn attestations_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.attestations = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().attestations(PermissionValue::Write).build())
         }
     }
-    fn attestations_read_permission(&mut self) {
+    pub fn attestations_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.attestations = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().attestations(PermissionValue::Read).build())
         }
     }
-    fn checks_write_permission(&mut self) {
+    pub fn checks_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.checks = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().checks(PermissionValue::Write).build())
         }
     }
-    fn checks_read_permission(&mut self) {
+    pub fn checks_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.checks = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().checks(PermissionValue::Read).build())
         }
     }
-    fn contents_write_permission(&mut self) {
+    pub fn contents_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.contents = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().contents(PermissionValue::Write).build())
         }
     }
-    fn contents_read_permission(&mut self) {
+    pub fn contents_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.contents = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().contents(PermissionValue::Read).build())
         }
     }
-    fn deployments_write_permission(&mut self) {
+    pub fn deployments_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.deployments = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().deployments(PermissionValue::Write).build())
         }
     }
-    fn deployments_read_permission(&mut self) {
+    pub fn deployments_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.deployments = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().deployments(PermissionValue::Read).build())
         }
     }
-    fn id_write_permission(&mut self) {
+    pub fn id_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.id = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().id(PermissionValue::Write).build())
         }
     }
-    fn id_read_permission(&mut self) {
+    pub fn id_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.id = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().id(PermissionValue::Read).build())
         }
     }
-    fn issues_write_permission(&mut self) {
+    pub fn issues_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.issues = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().issues(PermissionValue::Write).build())
         }
     }
-    fn issues_read_permission(&mut self) {
+    pub fn issues_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.issues = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().issues(PermissionValue::Read).build())
         }
     }
-    fn discussions_write_permission(&mut self) {
+    pub fn discussions_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.discussions = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().discussions(PermissionValue::Write).build())
         }
     }
-    fn discussions_read_permission(&mut self) {
+    pub fn discussions_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.discussions = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().discussions(PermissionValue::Read).build())
         }
     }
-    fn packages_write_permission(&mut self) {
+    pub fn packages_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.packages = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().packages(PermissionValue::Write).build())
         }
     }
-    fn packages_read_permission(&mut self) {
+    pub fn packages_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.packages = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().packages(PermissionValue::Read).build())
         }
     }
-    fn pages_write_permission(&mut self) {
+    pub fn pages_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pages = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().pages(PermissionValue::Write).build())
         }
     }
-    fn pages_read_permission(&mut self) {
+    pub fn pages_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pages = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().pages(PermissionValue::Read).build())
         }
     }
-    fn pull_write_permission(&mut self) {
+    pub fn pull_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pull = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().pull(PermissionValue::Write).build())
         }
     }
-    fn pull_read_permission(&mut self) {
+    pub fn pull_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pull = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().pull(PermissionValue::Read).build())
         }
     }
-    fn repository_write_permission(&mut self) {
+    pub fn repository_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.repository = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().repository(PermissionValue::Write).build())
         }
     }
-    fn repository_read_permission(&mut self) {
+    pub fn repository_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.repository = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().repository(PermissionValue::Read).build())
         }
     }
-    fn security_write_permission(&mut self) {
+    pub fn security_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.security = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().security(PermissionValue::Write).build())
         }
     }
-    fn security_read_permission(&mut self) {
+    pub fn security_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.security = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().security(PermissionValue::Read).build())
         }
     }
-    fn statuses_write_permission(&mut self) {
+    pub fn statuses_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.statuses = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().statuses(PermissionValue::Write).build())
         }
     }
-    fn statuses_read_permission(&mut self) {
+    pub fn statuses_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.statuses = PermissionValue::Read;
         } else {
@@ -221,27 +222,27 @@ use typed_builder::TypedBuilder;
         }
     }
 
-    fn env_var(&mut self, key: impl ToString, value: impl ToString) {
+    pub fn env_var(&mut self, key: impl ToString, value: impl ToString) {
         self.env.insert(key.to_string(), value.to_string());
     }
 
-    fn default_run_shell(&mut self, shell: impl ToString) {
+    pub fn default_run_shell(&mut self, shell: impl ToString) {
         self.defaults.run.shell = Some(shell.to_string());
     }
 
-    fn default_run_cwd(&mut self, cwd: impl ToString) {
+    pub fn default_run_cwd(&mut self, cwd: impl ToString) {
         self.defaults.run.working_directory = Some(cwd.to_string());
     }
 
-    fn concurrency_group(&mut self, group: impl Into<Value>) {
+    pub fn concurrency_group(&mut self, group: impl Into<Value>) {
         self.concurrency.group = Some(group.into());
     }
 
-    fn concurrency_cancel_in_progress(&mut self) {
+    pub fn concurrency_cancel_in_progress(&mut self) {
         self.concurrency.cancel_in_progress = Some(true.into());
     }
 
-    fn add_job(&mut self, name: impl ToString, job: Job) {
+    pub fn add_job(&mut self, name: impl ToString, job: Job) {
         self.jobs.insert(name.to_string(), job);
     }
 ))]
@@ -266,9 +267,9 @@ pub struct Workflow {
     #[serde(default, skip_serializing_if = "Concurrency::is_empty")]
     #[builder(via_mutators(init = Default::default()))]
     pub concurrency: Concurrency,
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     #[builder(via_mutators(init = Default::default()))]
-    pub jobs: BTreeMap<String, Job>,
+    pub jobs: IndexMap<String, Job>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
@@ -302,19 +303,19 @@ impl Triggers {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn branch(&mut self, branch: impl ToString) {
+    pub fn branch(&mut self, branch: impl ToString) {
         self.branches.push(branch.to_string());
     }
-    fn ignore_branch(&mut self, branch: impl ToString) {
+    pub fn ignore_branch(&mut self, branch: impl ToString) {
         self.branches_ignore.push(branch.to_string());
     }
-    fn path(&mut self, path: impl ToString) {
+    pub fn path(&mut self, path: impl ToString) {
         self.paths.push(path.to_string());
     }
-    fn ignore_path(&mut self, path: impl ToString) {
+    pub fn ignore_path(&mut self, path: impl ToString) {
         self.paths_ignore.push(path.to_string());
     }
-    fn r#type(&mut self, value: impl ToString) {
+    pub fn r#type(&mut self, value: impl ToString) {
         self.types.push(value.to_string());
     }
 ))]
@@ -349,25 +350,25 @@ impl PullRequest {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn branch(&mut self, branch: impl ToString) {
+    pub fn branch(&mut self, branch: impl ToString) {
         self.branches.push(branch.to_string());
     }
-    fn ignore_branch(&mut self, branch: impl ToString) {
+    pub fn ignore_branch(&mut self, branch: impl ToString) {
         self.branches_ignore.push(branch.to_string());
     }
-    fn tag(&mut self, tag: impl ToString) {
+    pub fn tag(&mut self, tag: impl ToString) {
         self.tags.push(tag.to_string());
     }
-    fn ignore_tag(&mut self, tag: impl ToString) {
+    pub fn ignore_tag(&mut self, tag: impl ToString) {
         self.tags_ignore.push(tag.to_string());
     }
-    fn path(&mut self, path: impl ToString) {
+    pub fn path(&mut self, path: impl ToString) {
         self.paths.push(path.to_string());
     }
-    fn ignore_path(&mut self, path: impl ToString) {
+    pub fn ignore_path(&mut self, path: impl ToString) {
         self.paths_ignore.push(path.to_string());
     }
-    fn r#type(&mut self, value: impl ToString) {
+    pub fn r#type(&mut self, value: impl ToString) {
         self.types.push(value.to_string());
     }
 ))]
@@ -410,10 +411,10 @@ impl Push {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn cron(&mut self, value: impl ToString) {
+    pub fn cron(&mut self, value: impl ToString) {
         self.cron.push(value.to_string());
     }
-    fn r#type(&mut self, value: impl ToString) {
+    pub fn r#type(&mut self, value: impl ToString) {
         self.types.push(value.to_string());
     }
 ))]
@@ -435,22 +436,22 @@ impl Schedule {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn input(&mut self,key: impl ToString, value: Input) {
+    pub fn input(&mut self,key: impl ToString, value: Input) {
         self.inputs.insert(key.to_string(), value);
     }
-    fn output(&mut self,key: impl ToString, value: Output) {
+    pub fn output(&mut self,key: impl ToString, value: Output) {
         self.outputs.insert(key.to_string(), value);
     }
-    fn secret(&mut self,key: impl ToString, value: Secret) {
+    pub fn secret(&mut self,key: impl ToString, value: Secret) {
         self.secrets.insert(key.to_string(), value);
     }
-    fn branch(&mut self, branch: impl ToString) {
+    pub fn branch(&mut self, branch: impl ToString) {
         self.branches.push(branch.to_string());
     }
-    fn ignore_branch(&mut self, branch: impl ToString) {
+    pub fn ignore_branch(&mut self, branch: impl ToString) {
         self.branches_ignore.push(branch.to_string());
     }
-    fn r#type(&mut self, value: impl ToString) {
+    pub fn r#type(&mut self, value: impl ToString) {
         self.types.push(value.to_string());
     }
 ))]
@@ -489,10 +490,10 @@ impl WorkflowCall {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn input(&mut self,key: impl ToString, value: Input) {
+    pub fn input(&mut self,key: impl ToString, value: Input) {
         self.inputs.insert(key.to_string(), value);
     }
-    fn r#type(&mut self, value: impl ToString) {
+    pub fn r#type(&mut self, value: impl ToString) {
         self.types.push(value.to_string());
     }
 ))]
@@ -632,10 +633,10 @@ impl std::default::Default for PermissionValue {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[builder(mutators(
-    fn shell(&mut self, shell: impl ToString) {
+    pub fn shell(&mut self, shell: impl ToString) {
         self.run.shell = Some(shell.to_string());
     }
-    fn working_directory(&mut self, cwd: impl ToString) {
+    pub fn working_directory(&mut self, cwd: impl ToString) {
         self.run.working_directory = Some(cwd.to_string());
     }
 ))]
@@ -684,222 +685,222 @@ impl Concurrency {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn actions_write_permission(&mut self) {
+    pub fn actions_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.actions = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().actions(PermissionValue::Write).build())
         }
     }
-    fn actions_read_permission(&mut self) {
+    pub fn actions_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.actions = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().actions(PermissionValue::Read).build())
         }
     }
-    fn attestations_write_permission(&mut self) {
+    pub fn attestations_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.attestations = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().attestations(PermissionValue::Write).build())
         }
     }
-    fn attestations_read_permission(&mut self) {
+    pub fn attestations_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.attestations = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().attestations(PermissionValue::Read).build())
         }
     }
-    fn checks_write_permission(&mut self) {
+    pub fn checks_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.checks = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().checks(PermissionValue::Write).build())
         }
     }
-    fn checks_read_permission(&mut self) {
+    pub fn checks_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.checks = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().checks(PermissionValue::Read).build())
         }
     }
-    fn contents_write_permission(&mut self) {
+    pub fn contents_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.contents = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().contents(PermissionValue::Write).build())
         }
     }
-    fn contents_read_permission(&mut self) {
+    pub fn contents_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.contents = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().contents(PermissionValue::Read).build())
         }
     }
-    fn deployments_write_permission(&mut self) {
+    pub fn deployments_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.deployments = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().deployments(PermissionValue::Write).build())
         }
     }
-    fn deployments_read_permission(&mut self) {
+    pub fn deployments_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.deployments = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().deployments(PermissionValue::Read).build())
         }
     }
-    fn id_write_permission(&mut self) {
+    pub fn id_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.id = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().id(PermissionValue::Write).build())
         }
     }
-    fn id_read_permission(&mut self) {
+    pub fn id_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.id = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().id(PermissionValue::Read).build())
         }
     }
-    fn issues_write_permission(&mut self) {
+    pub fn issues_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.issues = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().issues(PermissionValue::Write).build())
         }
     }
-    fn issues_read_permission(&mut self) {
+    pub fn issues_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.issues = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().issues(PermissionValue::Read).build())
         }
     }
-    fn discussions_write_permission(&mut self) {
+    pub fn discussions_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.discussions = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().discussions(PermissionValue::Write).build())
         }
     }
-    fn discussions_read_permission(&mut self) {
+    pub fn discussions_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.discussions = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().discussions(PermissionValue::Read).build())
         }
     }
-    fn packages_write_permission(&mut self) {
+    pub fn packages_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.packages = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().packages(PermissionValue::Write).build())
         }
     }
-    fn packages_read_permission(&mut self) {
+    pub fn packages_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.packages = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().packages(PermissionValue::Read).build())
         }
     }
-    fn pages_write_permission(&mut self) {
+    pub fn pages_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pages = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().pages(PermissionValue::Write).build())
         }
     }
-    fn pages_read_permission(&mut self) {
+    pub fn pages_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pages = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().pages(PermissionValue::Read).build())
         }
     }
-    fn pull_write_permission(&mut self) {
+    pub fn pull_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pull = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().pull(PermissionValue::Write).build())
         }
     }
-    fn pull_read_permission(&mut self) {
+    pub fn pull_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.pull = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().pull(PermissionValue::Read).build())
         }
     }
-    fn repository_write_permission(&mut self) {
+    pub fn repository_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.repository = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().repository(PermissionValue::Write).build())
         }
     }
-    fn repository_read_permission(&mut self) {
+    pub fn repository_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.repository = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().repository(PermissionValue::Read).build())
         }
     }
-    fn security_write_permission(&mut self) {
+    pub fn security_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.security = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().security(PermissionValue::Write).build())
         }
     }
-    fn security_read_permission(&mut self) {
+    pub fn security_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.security = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().security(PermissionValue::Read).build())
         }
     }
-    fn statuses_write_permission(&mut self) {
+    pub fn statuses_write_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.statuses = PermissionValue::Write;
         } else {
             self.permissions = Some(Permissions::builder().statuses(PermissionValue::Write).build())
         }
     }
-    fn statuses_read_permission(&mut self) {
+    pub fn statuses_read_permission(&mut self) {
         if let Some(perms) = self.permissions.as_mut() {
             perms.statuses = PermissionValue::Read;
         } else {
             self.permissions = Some(Permissions::builder().statuses(PermissionValue::Read).build())
         }
     }
-    fn needs(&mut self, value: impl ToString) {
+    pub fn needs(&mut self, value: impl ToString) {
         self.needs.push(value.to_string())
     }
 
-    fn output(&mut self, key: impl ToString, value: impl ToString) {
+    pub fn output(&mut self, key: impl ToString, value: impl ToString) {
         self.outputs.insert(key.to_string(), value.to_string());
     }
-    fn env_var(&mut self, key: impl ToString, value: impl ToString) {
+    pub fn env_var(&mut self, key: impl ToString, value: impl ToString) {
         self.env.insert(key.to_string(), value.to_string());
     }
-    fn add_step(&mut self, step: JobStep) {
+    pub fn add_step(&mut self, step: JobStep) {
         self.steps.push(step);
     }
-    fn service(&mut self, name: impl ToString, container: Container) {
+    pub fn service(&mut self, name: impl ToString, container: Container) {
         self.services.insert(name.to_string(), container);
     }
-    fn with(&mut self, key: impl ToString, value: impl Into<Value>) {
+    pub fn with(&mut self, key: impl ToString, value: impl Into<Value>) {
         self.with.insert(key.to_string(), value.into());
     }
-    fn secret(&mut self, key: impl ToString, value: impl ToString) {
+    pub fn secret(&mut self, key: impl ToString, value: impl ToString) {
         self.secrets.insert(key.to_string(), value.to_string());
     }
 ))]
@@ -982,11 +983,11 @@ impl Environment {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn with(&mut self, key: impl ToString, value: impl Into<Value>) {
+    pub fn with(&mut self, key: impl ToString, value: impl Into<Value>) {
         self.with.insert(key.to_string(), value.into());
     }
 
-    fn env(&mut self, key: impl ToString, value: impl ToString) {
+    pub fn env(&mut self, key: impl ToString, value: impl ToString) {
         self.env.insert(key.to_string(), value.to_string());
     }
 ))]
@@ -1032,13 +1033,31 @@ pub struct JobStep {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[serde(rename_all = "kebab-case")]
 #[builder(mutators(
-    fn matrix(&mut self, key: impl ToString, value: impl IntoIterator<Item = Value>) {
-        self.matrix.insert(key.to_string(), Vec::from_iter(value.into_iter()));
+    pub fn matrix_expr(&mut self, expr: impl ToString) {
+        self.matrix = Matrix::String(expr.to_string());
     }
 
-    fn add_to_matrix(&mut self, key: impl ToString, value: impl Into<Value>) {
+    pub fn matrix(&mut self, key: impl ToString, value: impl IntoIterator<Item = Value>) {
+        let Matrix::Map(matrix) = &mut self.matrix else {
+            self.matrix = Matrix::Map(
+                BTreeMap::from_iter([
+                    (key.to_string(), Vec::from_iter(value.into_iter()))
+                ]));
+            return;
+        };
+        matrix.insert(key.to_string(), Vec::from_iter(value.into_iter()));
+    }
+
+    pub fn add_to_matrix(&mut self, key: impl ToString, value: impl Into<Value>) {
         let value = value.into();
-        self.matrix.entry(key.to_string())
+        let Matrix::Map(matrix) = &mut self.matrix else {
+            self.matrix = Matrix::Map(
+                BTreeMap::from_iter([
+                    (key.to_string(), vec![value])
+                ]));
+            return;
+        };
+        matrix.entry(key.to_string())
             .and_modify(|v| v.push(value.clone()))
             .or_insert_with(|| {
                 vec![value]
@@ -1046,15 +1065,36 @@ pub struct JobStep {
     }
 ))]
 pub struct Strategy {
-    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    #[serde(default, skip_serializing_if = "Matrix::is_empty")]
     #[builder(via_mutators(init = Default::default()))]
-    pub matrix: BTreeMap<String, Vec<Value>>,
+    pub matrix: Matrix,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[builder(setter(strip_option, into))]
+    #[builder(default, setter(strip_option, into))]
     pub fail_fast: Option<Value>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[builder(setter(strip_option, into))]
+    #[builder(default, setter(strip_option, into))]
     pub max_parallel: Option<Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Matrix {
+    String(String),
+    Map(BTreeMap<String, Vec<Value>>),
+}
+
+impl Default for Matrix {
+    fn default() -> Self {
+        Self::Map(Default::default())
+    }
+}
+
+impl Matrix {
+    pub fn is_empty(&self) -> bool {
+        match self {
+            Matrix::String(s) => s.is_empty(),
+            Matrix::Map(m) => m.is_empty(),
+        }
+    }
 }
 
 impl Strategy {
@@ -1066,18 +1106,18 @@ impl Strategy {
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TypedBuilder)]
 #[builder(field_defaults(default))]
 #[builder(mutators(
-    fn env_var(&mut self, key: impl ToString, value: impl Into<Value>) {
+    pub fn env_var(&mut self, key: impl ToString, value: impl Into<Value>) {
         self.env.insert(key.to_string(), value.into());
     }
 
-    fn port(&mut self, port: impl Into<Value>) {
+    pub fn port(&mut self, port: impl Into<Value>) {
         self.ports.push(port.into());
     }
 
-    fn volume(&mut self, volume: impl Into<Value>) {
+    pub fn volume(&mut self, volume: impl Into<Value>) {
         self.volumes.push(volume.into());
     }
-    fn option(&mut self, option: impl Into<Value>) {
+    pub fn option(&mut self, option: impl Into<Value>) {
         self.options.push(option.into());
     }
 ))]
@@ -1132,7 +1172,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn workflow_builder() {
+    pub fn workflow_builder() {
         let workflow = Workflow::builder()
             .name("test-workflow")
             .on_push(

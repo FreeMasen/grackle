@@ -16,6 +16,7 @@ serde = { version = "1", features = [ "derive" ] }
 serde_yml = "0.0.10"
 typed-builder = "0.19"
 strum = { version = "0.26", features = [ "derive" ] }
+indexmap = { version ="2.2", features = [ "serde" ] }
 
 [dev-dependencies]
 insta = { version = "1.39", features = [ "yaml" ] }

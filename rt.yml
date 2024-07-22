@@ -1,0 +1,224 @@
+name: Release
+'on':
+  pull_request: {}
+  push:
+    tags:
+    - '**[0-9]+.[0-9]+.[0-9]+*'
+permissions:
+  contents: Write
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      publishing: ${{ !github.event.pull_request }}
+      tag: ${{ !github.event.pull_request && github.ref_name || '' }}
+      tag-flag: ${{ !github.event.pull_request && format('--tag={0}', github.ref_name) || '' }}
+      val: ${{ steps.plan.outputs.manifest }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Install cargo-dist
+      run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.14.1/cargo-dist-installer.sh | sh
+      shell: bash
+    - id: plan
+      run: |-
+        cargo dist ${{ (!github.event.pull_request && format('host --steps=create --tag={0}', github.ref_name)) || 'plan' }} --output-format=json > plan-dist-manifest.json
+        echo "cargo dist ran successfully"
+        cat plan-dist-manifest.json
+        echo "manifest=$(jq -c "." plan-dist-manifest.json)" >> "$GITHUB_OUTPUT"
+    - name: Upload dist-manifest.json
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-plan-dist-manifest
+        path: plan-dist-manifest.json
+  build-local-artifacts:
+    name: build-local-artifacts (${{ join(matrix.targets, ', ') }})
+    needs:
+    - plan
+    if: ${{ fromJson(needs.plan.outputs.val).ci.github.artifacts_matrix.include != null && (needs.plan.outputs.publishing == 'true' || fromJson(needs.plan.outputs.val).ci.github.pr_run_mode == 'upload') }}
+    runs-on: ${{ matrix.runner }}
+    env:
+      BUILD_MANIFEST_NAME: target/distrib/${{ join(matrix.targets, '-') }}-dist-manifest.json
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: enable windows longpaths
+      run: git config --global core.longpaths true
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - uses: swatinem/rust-cache@v2
+      with:
+        key: ${{ join(matrix.targets, '-') }}
+    - name: Install cargo-dist
+      run: ${{ matrix.install_dist }}
+    - name: Fetch local artifacts
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+        path: target/distrib/
+        pattern: artifacts-*
+    - name: Install dependencies
+      run: ${{ matrix.packages_install }}
+    - name: Build artifacts
+      run: |-
+        # Actually do builds and make zips and whatnot
+        cargo dist build ${{ needs.plan.outputs.tag-flag }} --print=linkage --output-format=json ${{ matrix.dist_args }} > dist-manifest.json
+        echo "cargo dist ran successfully"
+    - id: cargo-dist
+      name: Post-build
+      run: |-
+        # Parse out what we just built and upload it to scratch storage
+        echo "paths<<EOF" >> "$GITHUB_OUTPUT"
+        jq --raw-output ".upload_files[]" dist-manifest.json >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+        cp dist-manifest.json "$BUILD_MANIFEST_NAME"
+      shell: bash
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-build-local-${{ join(matrix.targets, '_') }}
+        path: |-
+          ${{ steps.cargo-dist.outputs.paths }}
+          ${{ env.BUILD_MANIFEST_NAME }}
+    strategy:
+      matrix: !String ${{ fromJson(needs.plan.outputs.val).ci.github.artifacts_matrix }}
+      fail-fast: false
+  build-global-artifacts:
+    needs:
+    - plan
+    - build-local-artifacts
+    runs-on: ubuntu-20.04
+    env:
+      BUILD_MANIFEST_NAME: target/distrib/global-dist-manifest.json
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Install cargo-dist
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+        path: target/distrib/
+        pattern: artifacts-*
+    - id: cargo-dist
+      run: |-
+        cargo dist build ${{ needs.plan.outputs.tag-flag }} --output-format=json "--artifacts=global" > dist-manifest.json
+        echo "cargo dist ran successfully"
+        # Parse out what we just built and upload it to scratch storage
+        echo "paths<<EOF" >> "$GITHUB_OUTPUT"
+        jq --raw-output ".upload_files[]" dist-manifest.json >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+        cp dist-manifest.json "$BUILD_MANIFEST_NAME"
+      shell: bash
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-build-global
+        path: |-
+          ${{ steps.cargo-dist.outputs.paths }}
+          ${{ env.BUILD_MANIFEST_NAME }}
+  host:
+    name: host
+    needs:
+    - plan
+    - build-local-artifacts
+    - build-global-artifacts
+    if: ${{ always() && needs.plan.outputs.publishing == 'true' && (needs.build-global-artifacts.result == 'skipped' || needs.build-global-artifacts.result == 'success') && (needs.build-local-artifacts.result == 'skipped' || needs.build-local-artifacts.result == 'success') }}
+    runs-on: ubuntu-20.04
+    outputs:
+      val: ${{ steps.host.outputs.manifest }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Install cargo-dist
+      run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.14.1/cargo-dist-installer.sh | sh
+    - name: Fetch artifacts
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+        path: target/distrib/
+        pattern: artifacts-*
+    - id: host
+      run: |-
+        cargo dist host ${{ needs.plan.outputs.tag-flag }} --steps=upload --steps=release --output-format=json > dist-manifest.json
+        echo "artifacts uploaded and released successfully"
+        cat dist-manifest.json
+        echo "manifest=$(jq -c "." dist-manifest.json)" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: Upload dist-manifest.json
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-dist-manifest
+        path: dist-manifest.json
+  publish-homebrew-formula:
+    needs:
+    - plan
+    - host
+    if: ${{ !fromJson(needs.plan.outputs.val).announcement_is_prerelease || fromJson(needs.plan.outputs.val).publish_prereleases }}
+    runs-on: ubuntu-20.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_EMAIL: admin+bot@axo.dev
+      GITHUB_USER: axo bot
+      PLAN: ${{ needs.plan.outputs.val }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        token: freemasen/homebrew-tap
+    - name: Fetch homebrew formulae
+      uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
+        path: Formula/
+        pattern: artifacts-*
+    - name: Commit formula files
+      run: |-
+        git config --global user.name "${GITHUB_USER}"
+        git config --global user.email "${GITHUB_EMAIL}"
+        for release in $(echo "$PLAN" | jq --compact-output '.releases[] | select([.artifacts[] | endswith(".rb")] | any)'); do
+          filename=$(echo "$release" | jq '.artifacts[] | select(endswith(".rb"))' --raw-output)
+          name=$(echo "$filename" | sed "s/\.rb$//")
+          version=$(echo "$release" | jq .app_version --raw-output)
+          git add "Formula/${filename}"
+          git commit -m "${name} ${version}"
+        done
+        git push
+  announce:
+    needs:
+    - plan
+    - host
+    - publish-homebrew-formula
+    if: ${{ always() && needs.host.result == 'success' && (needs.publish-homebrew-formula.result == 'skipped' || needs.publish-homebrew-formula.result == 'success') }}
+    runs-on: ubuntu-20.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Download GitHub Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        'merge-multiple:': true
+        path: artifacts
+        pattern: artifacts-*
+    - name: Cleanup
+      run: |-
+        # Remove the granular manifests
+        rm -f artifacts/*-dist-manifest.json
+    - name: Create GitHub Release
+      with:
+        artifacts: artifacts/*
+        body: ${{ fromJson(needs.host.outputs.val).announcement_github_body }}
+        name: ${{ fromJson(needs.host.outputs.val).announcement_title }}
+        prerelease: ${{ fromJson(needs.host.outputs.val).announcement_is_prerelease }}
+        tag: ${{ needs.plan.outputs.tag }}
+
